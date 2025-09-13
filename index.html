@@ -105,6 +105,9 @@
     const totalSteps = 4;
     let formData = {};
 
+    // مطمئن شدن از آماده بودن Web App
+    Telegram.WebApp.ready();
+
     function showStep(step) {
       document.querySelectorAll(".step").forEach((el, i) => {
         el.classList.remove("active");
@@ -126,9 +129,15 @@
         formData.interests = Array.from(checks).map(el => el.value);
       }
       if (currentStep === 4) {
-        formData.message = document.getElementById("message").value.trim();
-        Telegram.WebApp.sendData(JSON.stringify(formData));
-        Telegram.WebApp.close();
+        // اگر پیام خالی بود یک مقدار پیش‌فرض بگذار
+        formData.message = document.getElementById("message").value.trim() || "—";
+
+        if (Telegram.WebApp) {
+          Telegram.WebApp.sendData(JSON.stringify(formData));
+          Telegram.WebApp.close();
+        } else {
+          alert("⚠️ این تابع فقط در Web App تلگرام کار می‌کند.");
+        }
         return;
       }
       currentStep++;
