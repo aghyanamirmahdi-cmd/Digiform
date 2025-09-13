@@ -18,9 +18,7 @@
     }
     .step { display: none; }
     .step.active { display: block; }
-    .input-box {
-      margin-bottom: 15px;
-    }
+    .input-box { margin-bottom: 15px; }
     input, textarea {
       width: 100%;
       padding: 10px;
@@ -28,10 +26,7 @@
       border: 1px solid #ccc;
       font-size: 14px;
     }
-    .options label {
-      display: block;
-      margin: 5px 0;
-    }
+    .options label { display: block; margin: 5px 0; }
     button {
       width: 48%;
       padding: 12px;
@@ -44,14 +39,8 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    button:hover {
-      background: #0077b3;
-    }
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
+    button:hover { background: #0077b3; }
+    .nav { display: flex; justify-content: space-between; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -94,6 +83,13 @@
     </div>
   </div>
 
+  <!-- مرحله ۵ - فرم تکمیل شد -->
+  <div class="step" id="step5">
+    <h3>✅ فرم تکمیل شد!</h3>
+    <p>متشکریم که فرم را پر کردید.</p>
+    <button onclick="Telegram.WebApp.close()">بستن فرم</button>
+  </div>
+
   <!-- دکمه‌های هدایت -->
   <div class="nav">
     <button onclick="prevStep()">⬅️ قبلی</button>
@@ -102,10 +98,9 @@
 
   <script>
     let currentStep = 1;
-    const totalSteps = 4;
+    const totalSteps = 5;
     let formData = {};
 
-    // مطمئن شدن از آماده بودن Web App
     Telegram.WebApp.ready();
 
     function showStep(step) {
@@ -129,19 +124,20 @@
         formData.interests = Array.from(checks).map(el => el.value);
       }
       if (currentStep === 4) {
-        // اگر پیام خالی بود یک مقدار پیش‌فرض بگذار
         formData.message = document.getElementById("message").value.trim() || "—";
 
         if (Telegram.WebApp) {
           Telegram.WebApp.sendData(JSON.stringify(formData));
-          Telegram.WebApp.close();
         } else {
           alert("⚠️ این تابع فقط در Web App تلگرام کار می‌کند.");
         }
-        return;
       }
-      currentStep++;
-      showStep(currentStep);
+
+      // رفتن به مرحله بعد
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+      }
     }
 
     function prevStep() {
