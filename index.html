@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
-<title>تست Web App</title>
+<title>تست مینی‌اپ</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 body { font-family: sans-serif; direction: rtl; padding: 20px; background: #f5f7fa; }
@@ -14,17 +14,17 @@ button:hover { background: #0077b3; }
 </head>
 <body>
 
-<h2>تست فرم</h2>
-<input type="text" id="testInput" placeholder="متن خود را وارد کنید">
-<button onclick="submitForm()">ارسال</button>
+<h2>مینی‌اپ تستی</h2>
+<input type="text" id="userInput" placeholder="یک متن وارد کنید">
+<button onclick="submitData()">ارسال</button>
 
-<div id="completion">✅ فرم تکمیل شد!</div>
+<div id="completion">✅ داده ارسال شد و فرم تکمیل شد!</div>
 
 <script>
 Telegram.WebApp.ready();
 
-function submitForm() {
-    const value = document.getElementById("testInput").value.trim();
+function submitData() {
+    const value = document.getElementById("userInput").value.trim();
     if (!value) { alert("⚠️ فیلد خالی است!"); return; }
 
     // ارسال داده به ربات
@@ -33,10 +33,10 @@ function submitForm() {
     // نمایش پیام تکمیل
     document.getElementById("completion").style.display = "block";
 
-    // بستن Web App بعد از 2 ثانیه
+    // بعد از 1 ثانیه Web App را ببند
     setTimeout(() => {
         Telegram.WebApp.close();
-    }, 2000);
+    }, 1000);
 }
 </script>
 
