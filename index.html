@@ -1,153 +1,44 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <title>فرم چندمرحله‌ای</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      direction: rtl;
-      padding: 20px;
-      background: #f5f7fa;
-      color: #333;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .step { display: none; }
-    .step.active { display: block; }
-    .input-box { margin-bottom: 15px; }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-    .options label { display: block; margin: 5px 0; }
-    button {
-      width: 48%;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      background: #0088cc;
-      color: white;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover { background: #0077b3; }
-    .nav { display: flex; justify-content: space-between; margin-top: 20px; }
-  </style>
+<meta charset="UTF-8">
+<title>تست Web App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+body { font-family: sans-serif; direction: rtl; padding: 20px; background: #f5f7fa; }
+input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; }
+button { padding: 10px 20px; border: none; border-radius: 8px; background: #0088cc; color: white; cursor: pointer; }
+button:hover { background: #0077b3; }
+#completion { display: none; margin-top: 20px; color: green; font-weight: bold; }
+</style>
 </head>
 <body>
-  <h2>📋 فرم چندمرحله‌ای</h2>
 
-  <!-- مرحله ۱ -->
-  <div class="step active" id="step1">
-    <div class="input-box">
-      <label>👤 نام کامل:</label>
-      <input type="text" id="name" placeholder="نام خود را وارد کنید">
-    </div>
-  </div>
+<h2>تست فرم</h2>
+<input type="text" id="testInput" placeholder="متن خود را وارد کنید">
+<button onclick="submitForm()">ارسال</button>
 
-  <!-- مرحله ۲ -->
-  <div class="step" id="step2">
-    <div class="input-box">
-      <label>📞 شماره تماس:</label>
-      <input type="tel" id="phone" placeholder="09123456789">
-    </div>
-  </div>
+<div id="completion">✅ فرم تکمیل شد!</div>
 
-  <!-- مرحله ۳ -->
-  <div class="step" id="step3">
-    <div class="input-box">
-      <label>❓ علاقه‌مندی‌ها (چند مورد انتخاب کن):</label>
-      <div class="options">
-        <label><input type="checkbox" value="کتاب"> 📚 کتاب</label>
-        <label><input type="checkbox" value="ورزش"> 🏃 ورزش</label>
-        <label><input type="checkbox" value="موسیقی"> 🎵 موسیقی</label>
-        <label><input type="checkbox" value="سفر"> ✈️ سفر</label>
-      </div>
-    </div>
-  </div>
+<script>
+Telegram.WebApp.ready();
 
-  <!-- مرحله ۴ -->
-  <div class="step" id="step4">
-    <div class="input-box">
-      <label>📝 توضیحات یا پیام:</label>
-      <textarea id="message" placeholder="پیام خود را بنویسید"></textarea>
-    </div>
-  </div>
+function submitForm() {
+    const value = document.getElementById("testInput").value.trim();
+    if (!value) { alert("⚠️ فیلد خالی است!"); return; }
 
-  <!-- مرحله ۵ - فرم تکمیل شد -->
-  <div class="step" id="step5">
-    <h3>✅ فرم تکمیل شد!</h3>
-    <p>متشکریم که فرم را پر کردید.</p>
-    <button onclick="Telegram.WebApp.close()">بستن فرم</button>
-  </div>
+    // ارسال داده به ربات
+    Telegram.WebApp.sendData(JSON.stringify({text: value}));
 
-  <!-- دکمه‌های هدایت -->
-  <div class="nav">
-    <button onclick="prevStep()">⬅️ قبلی</button>
-    <button onclick="nextStep()">➡️ بعدی</button>
-  </div>
+    // نمایش پیام تکمیل
+    document.getElementById("completion").style.display = "block";
 
-  <script>
-    let currentStep = 1;
-    const totalSteps = 5;
-    let formData = {};
+    // بستن Web App بعد از 2 ثانیه
+    setTimeout(() => {
+        Telegram.WebApp.close();
+    }, 2000);
+}
+</script>
 
-    Telegram.WebApp.ready();
-
-    function showStep(step) {
-      document.querySelectorAll(".step").forEach((el, i) => {
-        el.classList.remove("active");
-        if (i === step - 1) el.classList.add("active");
-      });
-    }
-
-    function nextStep() {
-      if (currentStep === 1) {
-        formData.name = document.getElementById("name").value.trim();
-        if (!formData.name) return alert("⚠️ نام را وارد کنید!");
-      }
-      if (currentStep === 2) {
-        formData.phone = document.getElementById("phone").value.trim();
-        if (!formData.phone) return alert("⚠️ شماره تماس را وارد کنید!");
-      }
-      if (currentStep === 3) {
-        let checks = document.querySelectorAll("#step3 input:checked");
-        formData.interests = Array.from(checks).map(el => el.value);
-      }
-      if (currentStep === 4) {
-        formData.message = document.getElementById("message").value.trim() || "—";
-
-        if (Telegram.WebApp) {
-          Telegram.WebApp.sendData(JSON.stringify(formData));
-        } else {
-          alert("⚠️ این تابع فقط در Web App تلگرام کار می‌کند.");
-        }
-      }
-
-      // رفتن به مرحله بعد
-      if (currentStep < totalSteps) {
-        currentStep++;
-        showStep(currentStep);
-      }
-    }
-
-    function prevStep() {
-      if (currentStep > 1) {
-        currentStep--;
-        showStep(currentStep);
-      }
-    }
-
-    showStep(currentStep);
-  </script>
 </body>
 </html>
